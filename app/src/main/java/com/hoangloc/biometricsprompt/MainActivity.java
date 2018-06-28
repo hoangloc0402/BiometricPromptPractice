@@ -1,6 +1,7 @@
 package com.hoangloc.biometricsprompt;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.biometrics.BiometricPrompt;
 import android.os.Bundle;
@@ -35,7 +36,20 @@ public class MainActivity extends AppCompatActivity {
         if (!isSupportBiometricPrompt())
             return;
 
-        findViewById(R.id.buttonRegister).setOnClickListener(new View.OnClickListener() {
+        setOnClickBiometricPrompt();
+
+
+        findViewById(R.id.buttonFingerprintManager).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this,ActivityFingerprintManager.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    public void setOnClickBiometricPrompt(){
+        findViewById(R.id.buttonBiometricPrompt).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Signature signature;
@@ -81,14 +95,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
 
-
-        findViewById(R.id.buttonAuthenticate).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
+    private boolean isSupportBiometricPrompt() {
+        PackageManager packageManager = this.getPackageManager();
+        if (packageManager.hasSystemFeature(PackageManager.FEATURE_FINGERPRINT)) {
+            return true;
+        }
+        return false;
     }
 
     private CancellationSignal getCancellationSignal() {
@@ -128,7 +142,8 @@ public class MainActivity extends AppCompatActivity {
                     // Normally, ToBeSignedMessage and Signature are sent to the server and then verified
                     //Log.i(TAG, "Message: " + toBeSignedMessage);
                     //Log.i(TAG, "Signature (Base64 EncodeD): " + signatureString);
-                    Toast.makeText(getApplicationContext(), toBeSignedMessage + "     :" + signatureString, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Authentication Succeeded", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), toBeSignedMessage + "     :" + signatureString, Toast.LENGTH_SHORT).show();
                 } catch (SignatureException e) {
                     throw new RuntimeException();
                 }
@@ -139,16 +154,6 @@ public class MainActivity extends AppCompatActivity {
                 super.onAuthenticationFailed();
             }
         };
-    }
-
-
-
-    private boolean isSupportBiometricPrompt() {
-        PackageManager packageManager = this.getPackageManager();
-        if (packageManager.hasSystemFeature(PackageManager.FEATURE_FINGERPRINT)) {
-            return true;
-        }
-        return false;
     }
 
     private KeyPair generateKeyPair(String keyName, boolean invalidatedByBiometricEnrollment) throws Exception {

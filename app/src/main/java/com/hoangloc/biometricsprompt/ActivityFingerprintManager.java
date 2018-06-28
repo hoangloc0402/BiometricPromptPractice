@@ -133,4 +133,5 @@ public class ActivityFingerprintManager extends AppCompatActivity {
             throw new RuntimeException("Failed to init Cipher", e);
         }
     }
+
 }
